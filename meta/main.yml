@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: 'Jeremie CUADRADO'
   description: 'role to install base telegraf (provisioning)'
@@ -27,6 +28,6 @@ galaxy_info:
    - name: Debian
      versions:
      - 9
-  galaxy_tags: [telegraf,provisionning,influxdb]
+  galaxy_tags: [telegraf, provisionning, influxdb]
 
 dependencies: []

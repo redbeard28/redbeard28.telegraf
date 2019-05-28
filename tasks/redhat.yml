@@ -80,7 +80,6 @@
   notify: base_telegraf_logrotate
 
 
-
 - name: 'Telegraf: ensure service is enabled and started'
   systemd:
     name: "{{ base_telegraf_service_name }}"
