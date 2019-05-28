@@ -1,0 +1,13 @@
+---
+
+- name: 'base_telegraf_restart'
+  systemd:
+    name: "{{ base_telegraf_service_name }}"
+    state: restarted
+    daemon_reload: true
+  become: true
+
+- name: 'base_telegraf_logrotate'
+  command : "/usr/sbin/logrotate -f {{ base_telegraf_logrotate_file }}"
+  become: true
+  ignore_errors: yes

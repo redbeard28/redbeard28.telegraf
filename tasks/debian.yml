@@ -1,0 +1,106 @@
+---
+- name: "Install some stuff"
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - wget
+    - curl
+    - build-essential
+  environment: "{{ http_proxy | default({}) }}"
+
+- name: '{{ ansible_distribution }} - Telegraf: Add repository InfluxDB for telegraf from influxdata'
+  shell: |
+    wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+    source /etc/lsb-release
+    echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+    apt update
+  become: true
+  when: ansible_distribution == 'Ubuntu'
+  environment: "{{ http_proxy | default({}) }}"
+
+
+- name: '{{ ansible_distribution }} - Telegraf: Add repository InfluxDB for telegraf from influxdata'
+  shell: |
+    sudo apt-get update && sudo apt-get install apt-transport-https
+    curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+    echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+  become: true
+  when: ansible_distribution == 'Debian' and ansible_distribution_release == 'stretch'
+  environment: "{{ http_proxy | default({}) }}"
+
+
+# Installing telegraf agent
+- name: "Telegraf: Install agent {{ base_telegraf_service_name }}"
+  apt:
+    name: "{{ base_telegraf_service_name }}"
+  become: true
+  environment: "{{ http_proxy | default({}) }}"
+
+
+- name: "Python: Installing packages {{ base_telegraf_debian_python_package }}"
+  apt:
+    name: "{{ base_telegraf_debian_python_package }}"
+  become: yes
+  environment: "{{ http_proxy | default({}) }}"
+
+
+- name: "Python: python{{ base_telegraf_debian_python_version }} -m pip install packages"
+  shell: "python{{ base_telegraf_python_version }} -m pip install --proxy='{{ http_proxy }}' {{ item }}"
+  with_items:
+    - "{{ base_telegraf_pip_modules }}"
+  become: yes
+  environment: "{{ http_proxy | default() }}"
+
+
+# Required Folder Creation with correct user / group
+- name: 'Telegraf: Create folders'
+  file:
+    path: "{{ item }}"
+    state: 'directory'
+    owner: "{{ base_telegraf_user }}"
+    group: "{{ base_telegraf_group }}"
+    mode: '0755'
+  with_items:
+    - "{{ base_telegraf_dir_base }}"
+    - "{{ base_telegraf_dir_logs }}"
+    - "{{ base_telegraf_dir_metrics }}"
+  become: yes
+
+
+- name: 'Telegraf: Copy telegraf configuration file'
+  template:
+    src: 'telegraf.conf.j2'
+    dest: "{{ base_telegraf_config_basedir }}/telegraf.conf"
+    owner: "{{ base_telegraf_user }}"
+    group: "{{ base_telegraf_group }}"
+  become: true
+  notify: base_telegraf_restart
+  tags: config
+
+- name: 'Telegraf: Copy base system file'
+  template:
+    src: 'system.conf.j2'
+    dest: "{{ base_telegraf_config_extradir }}/system.conf"
+    owner: "{{ base_telegraf_user }}"
+    group: "{{ base_telegraf_group }}"
+  become: true
+  notify: base_telegraf_restart
+  tags: config
+
+
+- name: "Logrotate: Copy logrotate file: {{ base_telegraf_logrotate_file }}"
+  template:
+    src: 'logrotate.telegraf.j2'
+    dest: "{{ base_telegraf_logrotate_file }}"
+  become: true
+  notify: base_telegraf_logrotate
+
+
+- name: 'Telegraf: ensure service is enabled and started'
+  systemd:
+    name: "{{ base_telegraf_service_name }}"
+    state: 'started'
+    enabled: true
+    daemon_reload: true
+  become: true

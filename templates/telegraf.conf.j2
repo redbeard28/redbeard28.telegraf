@@ -1,0 +1,55 @@
+# {{ ansible_managed }}
+
+# -------------------------------
+# Telegraf Configuration File
+# -------------------------------
+# NB : to Test configuration
+# telegraf -test -config /etc/telegraf/telegraf.conf -config-directory /etc/telegraf/telegraf.d
+
+# Global tags can be specified here in key="value" format.
+# For regex usage please see : https://pythex.org/
+# TODO replace variables environnement / projet and role by group variables
+
+[global_tags]
+  environment = "{{ server_env | default('dev') }}"
+  group = "{{ server_group | default('myservergroup') }}"
+
+# Configuration for telegraf agent
+[agent]
+  interval = "{{ base_telegraf_metric_interval }}"
+  round_interval = true
+  metric_batch_size = 1000
+  metric_buffer_limit = 10000
+  collection_jitter = "0s"
+  flush_interval = "10s"
+  flush_jitter = "0s"
+  precision = ""
+  debug = {{ base_telegraf_debug_mode }}
+  quiet = false
+  logfile = "{{ base_telegraf_dir_logs }}/{{ base_telegraf_file_logs }}"
+  hostname = "{{ ansible_hostname | lower }}"
+  omit_hostname = false
+
+###############################################################################
+#                            OUTPUT PLUGINS                                   #
+###############################################################################
+
+
+{% if base_telegraf_influxdb | default('false') | bool %}
+# Send telegraf metrics directly to InfluxDB
+
+# Configuration for sending metrics to InfluxDB
+[[outputs.influxdb]]
+  urls = ["{{ base_telegraf_influxdb_urls | default('http://127.0.0.1:8086') }}"]
+  database = "{{ base_telegraf_database_name | default('telegraf') }}"
+  ## HTTP Basic Auth
+  username = "{{ base_telegraf_influxdb_username | default('telegraf') }}"
+  password = "{{ base_telegraf_influxdb_password | default('password') }}"
+  # insecure_skip_verify = false
+{% else %}
+# Send telegraf metrics to file(s)
+[[outputs.file]]
+## Files to write to, "stdout" is a specially handled file.
+  files = ["{{ base_telegraf_dir_metrics | default('/var/log/telegraf') }}/{{ base_telegraf_file_metrics | default('metrics.log') }}"]
+  data_format = "influx"
+{% endif %}

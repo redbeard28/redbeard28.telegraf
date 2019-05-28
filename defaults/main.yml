@@ -1,0 +1,13 @@
+---
+http_proxy: ''
+
+base_telegraf_user: 'telegraf'
+base_telegraf_group: 'telegraf'
+base_telegraf_service_name: 'telegraf'
+base_telegraf_dir_metrics: '/var/log/telegraf'
+base_telegraf_file_metrics: 'metrics.log'
+base_telegraf_metric_interval: '60s'
+base_telegraf_logrotate_file: '/etc/logrotate.d/telegraf'
+base_telegraf_debug_mode: 'false'
+
+base_telegraf_sys: []

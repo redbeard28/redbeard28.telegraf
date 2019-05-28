@@ -1,0 +1,31 @@
+# {{ ansible_managed }}
+# Enable LogRotate configuration for the 2 files genereted by telegraf
+# logs file and metrics file
+
+{{ base_telegraf_dir_logs }}/{{ base_telegraf_file_logs }}
+{
+    rotate {{ base_telegraf_rotate_day }}
+    daily
+    missingok
+    dateext
+    copytruncate
+    notifempty
+    compress
+    postrotate
+        /sbin/service {{ base_telegraf_service_name }} restart > /dev/null 2>/dev/null || true
+    endscript    
+}
+
+{{ base_telegraf_dir_metrics }}/{{ base_telegraf_file_metrics }}
+{
+    rotate {{ base_telegraf_rotate_day }}
+    daily
+    missingok
+    dateext
+    copytruncate
+    notifempty
+    compress
+    postrotate
+        /sbin/service {{ base_telegraf_service_name }} restart > /dev/null 2>/dev/null || true
+    endscript
+}
