@@ -6,7 +6,49 @@ A brief description of the role goes here.
 Requirements
 ------------
 
-This role must be part of an ansible-playbook. You have to import it by runing ansible-playbook install requirements.yml
+This repository holds an `Ansible <http://www.ansible.com/home>`_ role
+that is installable using ``ansible-galaxy``.  This role contains
+tasks used to install and set up a telegraf minimal install for:
+
+    - debian (tested OK)
+    - centos (tested OK)
+    - redhat (not yet tested)
+    - windows (dev in progress...)
+
+
+Contributing
+------------
+
+If you think you've found a bug or are interested in contributing to
+this project check out `redbeard28.telegraf on Github
+<https://github.com/redbeard28/redbeard28.telegraf>`_.
+
+Installation
+------------
+
+Create an ``ansible.cfg`` file in your project directory to tell
+Ansible where to install your roles 
+
+````yaml
+[defaults]
+roles_path = roles:external_roles
+vault_password_file = vault/.vault_password
+host_key_checking = False
+log_path = tmp/ansible.log
+local_tmp = tmp/.ansible/tmp
+retry_files_enabled = True
+retry_files_save_path = tmp/.ansible/ansible-retry
+force_color = 1
+forks = 50
+callback_whitelist = profile_tasks
+timeout = 30
+[ssh_connection]
+ssh_args = -i ~/.ssh/id_rsa -o ControlMaster=auto -o ControlPersist=30m
+control_path = ~/.ssh/ansible-%%r@%%h:%%p
+scp_if_ssh = True
+[privilege_escalation]
+become=true
+````
 
 
 
