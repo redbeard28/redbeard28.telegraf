@@ -5,8 +5,8 @@ base_telegraf_config_extradir: "{{ base_telegraf_config_basedir }}/telegraf.d"
 base_telegraf_dir_base: '/etc/telegraf'
 base_telegraf_dir_logs: "{{ base_telegraf_dir_base }}/logs"
 base_telegraf_file_logs: 'telegraf.log'
-base_telegraf_python_package_prefix: 'python35'
-base_telegraf_python_version: '3.5'
+base_telegraf_python_package_prefix: 'python36'
+base_telegraf_python_version: '3.6'
 base_telegraf_python_package:
   - "{{ base_telegraf_python_package_prefix }}"
   - "{{ base_telegraf_python_package_prefix }}-pip"
