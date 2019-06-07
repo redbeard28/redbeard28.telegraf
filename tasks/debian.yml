@@ -4,11 +4,13 @@
     name: "{{ packages }}"
   vars:
     packages:
-    - wget
-    - curl
-    - build-essential
+      - wget
+      - curl
+      - build-essential
   environment: "{{ http_proxy | default({}) }}"
 
+# TODO: http://willthames.github.io/2016/09/21/using-command-and-shell-in-ansible.html
+# TODO: https://github.com/ansible/ansible-lint/issues/497
 - name: '{{ ansible_distribution }} - Telegraf: Add repository InfluxDB for telegraf from influxdata'
   shell: |
     wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add -
@@ -20,8 +22,11 @@
   environment: "{{ http_proxy | default({}) }}"
 
 
+# TODO: http://willthames.github.io/2016/09/21/using-command-and-shell-in-ansible.html
+# TODO: https://github.com/ansible/ansible-lint/issues/497
 - name: '{{ ansible_distribution }} - Telegraf: Add repository InfluxDB for telegraf from influxdata'
   shell: |
+    set -o pipefail
     sudo apt-get update && sudo apt-get install apt-transport-https
     curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
     echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list

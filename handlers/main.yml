@@ -8,6 +8,6 @@
   become: true
 
 - name: 'base_telegraf_logrotate'
-  command : "/usr/sbin/logrotate -f {{ base_telegraf_logrotate_file }}"
+  command: "/usr/sbin/logrotate -f {{ base_telegraf_logrotate_file }}"
   become: true
   ignore_errors: yes

@@ -17,7 +17,7 @@
     name: "{{ base_telegraf_service_name }}"
     state: present
   become: true
-  environment: "{{ http_proxy | default({}) }}"
+
 
 
 - name: "Python: Installing packages {{ base_telegraf_python_package }}"
@@ -26,7 +26,7 @@
     state: present
   with_items: "{{ base_telegraf_python_package }}"
   become: yes
-  environment: "{{ http_proxy | default({}) }}"
+
 
 
 - name: "Python: python{{ base_telegraf_python_version }} -m pip install packages"
@@ -34,7 +34,7 @@
   with_items:
     - "{{ base_telegraf_pip_modules }}"
   become: yes
-  environment: "{{ http_proxy | default({}) }}"
+
 
 
 # Required Folder Creation with correct user / group
