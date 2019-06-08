@@ -19,7 +19,6 @@
   become: true
 
 
-
 - name: "Python: Installing packages {{ base_telegraf_python_package }}"
   package:
     name: "{{ item }}"
@@ -28,13 +27,11 @@
   become: yes
 
 
-
 - name: "Python: python{{ base_telegraf_python_version }} -m pip install packages"
   shell: "python{{ base_telegraf_python_version }} -m pip install --proxy='{{ http_proxy }}' {{ item }}"
   with_items:
     - "{{ base_telegraf_pip_modules }}"
   become: yes
-
 
 
 # Required Folder Creation with correct user / group
@@ -59,7 +56,21 @@
     owner: "{{ base_telegraf_user }}"
     group: "{{ base_telegraf_group }}"
   become: true
-  notify: base_telegraf_restart
+  when: ansible_virtualization_type == "docker"
+  become: true
+  notify: base_telegraf_restart_in_container
+
+
+- name: 'Telegraf: Copy telegraf configuration file'
+  template:
+    src: 'telegraf.conf.j2'
+    dest: "{{ base_telegraf_config_basedir }}/telegraf.conf"
+    owner: "{{ base_telegraf_user }}"
+    group: "{{ base_telegraf_group }}"
+  become: true
+  when: ansible_virtualization_type != "docker"
+  become: true
+  notify: base_telegraf_restart_no_container
 
 
 - name: 'Telegraf: Copy base configuration file'
@@ -68,9 +79,37 @@
     dest: "{{ base_telegraf_config_extradir }}/system.conf"
     owner: "{{ base_telegraf_user }}"
     group: "{{ base_telegraf_group }}"
+  when: ansible_virtualization_type != "docker"
   become: true
-  notify: base_telegraf_restart
+  notify: base_telegraf_restart_no_container
 
+
+- name: 'Telegraf: Copy base configuration file'
+  template:
+    src: 'system.conf.j2'
+    dest: "{{ base_telegraf_config_extradir }}/system.conf"
+    owner: "{{ base_telegraf_user }}"
+    group: "{{ base_telegraf_group }}"
+  when: ansible_virtualization_type == "docker"
+  become: true
+  notify: base_telegraf_restart_in_container
+
+
+- name: 'base_telegraf_restart for systemd'
+  systemd:
+    name: "{{ base_telegraf_service_name }}"
+    state: restarted
+    daemon_reload: true
+  become: true
+  when:
+    - ansible_virtualization_type != "docker"
+
+- name: "base_telegraf_restart for init.d "
+  service:
+    name: "{{ base_telegraf_service_name }}"
+    state: restarted
+  when:
+    - ansible_virtualization_type == "docker"
 
 - name: "Logrotate: Copy logrotate file: {{ base_telegraf_logrotate_file }}"
   template:
@@ -78,12 +117,3 @@
     dest: "{{ base_telegraf_logrotate_file }}"
   become: true
   notify: base_telegraf_logrotate
-
-
-- name: 'Telegraf: ensure service is enabled and started'
-  systemd:
-    name: "{{ base_telegraf_service_name }}"
-    state: 'started'
-    enabled: true
-    daemon_reload: true
-  become: true
