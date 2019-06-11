@@ -5,9 +5,6 @@ python:
   - "3.6"
 
 env:
-  global:
-    - base_telegraf_python_package_prefix: 'python34'
-    - base_telegraf_python_version: '3.4'
   matrix:
     - DISTRO: centos-latest
 #    - DISTRO: centos-6
@@ -20,6 +17,4 @@ install:
   - pip install molecule docker molecule[docker]
 
 script:
-  - molecule converge --scenario-name $DISTRO
-  - molecule verify --scenario-name $DISTRO
-  - molecule destroy --scenario-name $DISTRO
+  - molecule test --scenario-name $DISTRO

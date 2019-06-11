@@ -1,4 +1,15 @@
 ---
+scenario:
+  name: ubuntu-18.04
+  test_sequence:
+    - destroy
+    - create
+    - converge
+    # - idempotence
+    # - lint
+    - verify
+    - destroy
+
 dependency:
   name: galaxy
   options:
@@ -22,8 +33,8 @@ provisioner:
     converge: ../resources/playbook.yml
   lint:
     name: ansible-lint
-scenario:
-  name: ubuntu-18.04
+    enable: False
+
 verifier:
   name: goss
   lint:

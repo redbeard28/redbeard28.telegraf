@@ -1,8 +1,20 @@
 ---
 file:
+  /etc/telegraf:
+    exists: true
+    owner: telegraf
+    group: telegraf
+    mode: "0755"
+    filetype: directory
   /etc/telegraf/telegraf.conf:
-    # required attributes
     exists: true
+    owner: telegraf
+    group: telegraf
+    mode: "0644"
+    filetype: file
   /etc/telegraf/telegraf.d/system.conf:
-    # required attributes
     exists: true
+    owner: telegraf
+    group: telegraf
+    mode: "0644"
+    filetype: file

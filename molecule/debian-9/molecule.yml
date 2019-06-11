@@ -1,12 +1,22 @@
 ---
+scenario:
+  name: debian-9
+  test_sequence:
+    - destroy
+    - create
+    - converge
+    # - idempotence
+    # - lint
+    - verify
+    - destroy
+
 dependency:
   name: galaxy
   options:
     role-file: requirements.yml
 driver:
   name: docker
-lint:
-  name: yamllint
+
 platforms:
   - name: debian-9
     image: geerlingguy/docker-debian9-ansible
@@ -22,8 +32,8 @@ provisioner:
     converge: ../resources/playbook.yml
   lint:
     name: ansible-lint
-scenario:
-  name: debian-9
+    enable: False
+
 verifier:
   name: goss
   lint:

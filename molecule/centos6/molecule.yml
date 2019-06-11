@@ -1,4 +1,15 @@
 ---
+scenario:
+  name: centos-6
+  test_sequence:
+    - destroy
+    - create
+    - converge
+    # - idempotence
+    # - lint
+    - verify
+    - destroy
+
 dependency:
   name: galaxy
   enable: True
@@ -6,8 +17,7 @@ dependency:
     role-file: requirements.yml
 driver:
   name: docker
-lint:
-  name: yamllint
+
 platforms:
   - name: centos-6
     image: geerlingguy/docker-centos6-ansible
@@ -28,8 +38,8 @@ provisioner:
     converge: ../resources/playbook.yml
   lint:
     name: ansible-lint
-scenario:
-  name: centos-6
+    enable: False
+
 verifier:
   name: goss
   lint:
