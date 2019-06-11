@@ -1,5 +1,5 @@
 ---
-#- include: windows.yml
+# - include: windows.yml
 #  when: ansible_os_family == "Windows"
 
 - include: linux.yml
