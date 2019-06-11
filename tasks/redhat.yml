@@ -19,14 +19,12 @@
   become: true
 
 
-
 - name: "Python: Installing packages {{ base_telegraf_python_package }}"
   package:
     name: "{{ item }}"
     state: present
   with_items: "{{ base_telegraf_python_package }}"
   become: yes
-
 
 
 - name: "Python: python{{ base_telegraf_python_version }} -m pip install packages"
@@ -36,54 +34,3 @@
   become: yes
 
 
-
-# Required Folder Creation with correct user / group
-- name: 'Telegraf: Create folders'
-  file:
-    path: "{{ item }}"
-    state: 'directory'
-    owner: "{{ base_telegraf_user }}"
-    group: "{{ base_telegraf_group }}"
-    mode: '0755'
-  with_items:
-    - "{{ base_telegraf_dir_base }}"
-    - "{{ base_telegraf_dir_logs }}"
-    - "{{ base_telegraf_dir_metrics }}"
-  become: yes
-
-
-- name: 'Telegraf: Copy telegraf configuration file'
-  template:
-    src: 'telegraf.conf.j2'
-    dest: "{{ base_telegraf_config_basedir }}/telegraf.conf"
-    owner: "{{ base_telegraf_user }}"
-    group: "{{ base_telegraf_group }}"
-  become: true
-  notify: base_telegraf_restart
-
-
-- name: 'Telegraf: Copy base configuration file'
-  template:
-    src: 'system.conf.j2'
-    dest: "{{ base_telegraf_config_extradir }}/system.conf"
-    owner: "{{ base_telegraf_user }}"
-    group: "{{ base_telegraf_group }}"
-  become: true
-  notify: base_telegraf_restart
-
-
-- name: "Logrotate: Copy logrotate file: {{ base_telegraf_logrotate_file }}"
-  template:
-    src: 'logrotate.telegraf.j2'
-    dest: "{{ base_telegraf_logrotate_file }}"
-  become: true
-  notify: base_telegraf_logrotate
-
-
-- name: 'Telegraf: ensure service is enabled and started'
-  systemd:
-    name: "{{ base_telegraf_service_name }}"
-    state: 'started'
-    enabled: true
-    daemon_reload: true
-  become: true

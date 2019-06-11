@@ -4,3 +4,6 @@
 
 - include: debian.yml
   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+- include: telegraf.yml
+  tags: [deploy_telegraf]

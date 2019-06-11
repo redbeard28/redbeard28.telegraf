@@ -15,7 +15,7 @@ base_telegraf_pip_modules:
   - 'pyyaml'
 base_telegraf_rotate_day: 7
 
-base_telegraf_debian_python_package_prefix: 'python3.5'
+base_telegraf_debian_python_package_prefix: 'python3.6'
 base_telegraf_debian_python_version: '3'
 base_telegraf_debian_python_package:
   - "{{ base_telegraf_debian_python_package_prefix }}"

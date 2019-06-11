@@ -115,6 +115,62 @@ Including an example of how to use your role (for instance, with variables passe
     - { role: roles/redbeard28.telegraf, tags: [redbeard28.telegraf] }
 ````
  
+Molecule Framework
+-------------
+Please see (molecule documentation)[https://molecule.readthedocs.io/en/stable/configuration.html]
+
+```yaml
+driver:
+  name: docker
+platforms:
+  - name: instance
+    hostname: instance
+    image: image_name:tag
+    dockerfile: Dockerfile.j2
+    pull: True|False
+    pre_build_image: True|False
+    registry:
+      url: registry.example.com
+      credentials:
+        username: $USERNAME
+        password: $PASSWORD
+        email: user@example.com
+    override_command: True|False
+    command: sleep infinity
+    pid_mode: host
+    privileged: True|False
+    security_opts:
+      - seccomp=unconfined
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    tmpfs:
+      - /tmp
+      - /run
+    capabilities:
+      - SYS_ADMIN
+    exposed_ports:
+      - 53/udp
+      - 53/tcp
+    published_ports:
+      - 0.0.0.0:8053:53/udp
+      - 0.0.0.0:8053:53/tcp
+    ulimits:
+      - nofile:262144:262144
+    dns_servers:
+      - 8.8.8.8
+    networks:
+      - name: foo
+      - name: bar
+    network_mode: host
+    purge_networks: true
+    docker_host: tcp://localhost:12376
+    env:
+      FOO: bar
+    restart_policy: on-failure
+    restart_retries: 1
+    buildargs:
+        http_proxy: http://proxy.example.com:8080/
+```
  
 License
 -------
