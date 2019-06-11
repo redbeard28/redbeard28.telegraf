@@ -5,7 +5,7 @@ dependency:
 driver:
   name: docker
 lint:
-  name: yamllint
+  enabled: false
 platforms:
   - name: telegraf-centos-latest
     image: redbeard28/docker-centos7-ansible
