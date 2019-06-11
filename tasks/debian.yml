@@ -46,4 +46,3 @@
     - "{{ base_telegraf_pip_modules }}"
   become: yes
   environment: "{{ http_proxy | default() }}"
-

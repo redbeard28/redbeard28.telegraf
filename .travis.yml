@@ -6,19 +6,20 @@ python:
 
 env:
   global:
-    - ROLE_NAME: redbeard28.gitclient
+    - base_telegraf_python_package_prefix: 'python34'
+    - base_telegraf_python_version: '3.4'
   matrix:
     - DISTRO: centos-latest
-    - DISTRO: centos-6
-    - DISTRO: ubuntu-16.04
-    - DISTRO: ubuntu-18.04
-    - DISTRO: debian-9
-    - DISTRO: debian-10
+#    - DISTRO: centos-6
+#    - DISTRO: ubuntu-16.04
+#    - DISTRO: ubuntu-18.04
+#    - DISTRO: debian-9
+#    - DISTRO: debian-10
 
 install:
   - pip install molecule docker molecule[docker]
 
 script:
   - molecule converge --scenario-name $DISTRO
+  - molecule verify --scenario-name $DISTRO
   - molecule destroy --scenario-name $DISTRO
-

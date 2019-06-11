@@ -32,5 +32,3 @@
   with_items:
     - "{{ base_telegraf_pip_modules }}"
   become: yes
-
-
