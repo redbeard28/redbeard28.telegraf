@@ -1,6 +1,25 @@
 ---
 scenario:
   name: centos-latest
+  create_sequence:
+    - create
+    - prepare
+  check_sequence:
+    - destroy
+    - dependency
+    - create
+    - prepare
+    - converge
+    - check
+    - destroy
+  converge_sequence:
+    - dependency
+    - create
+    - prepare
+    - converge
+  destroy_sequence:
+#    - cleanup
+    - destroy
   test_sequence:
     - destroy
     - create
@@ -10,6 +29,7 @@ scenario:
     - verify
     - destroy
 
+
 dependency:
   name: galaxy
 
@@ -17,15 +37,16 @@ driver:
   name: docker
 platforms:
   - name: telegraf-centos-latest
+    log: True
     image: redbeard28/docker-centos7-ansible
     pre_build_image: yes
     privileged: True
+#    docker_host: tcp://localhost:2376
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-#    published_ports:
-#      - 0.0.0.0:6000:22/tcp
 provisioner:
   name: ansible
+  log: True
   playbooks:
     converge: ../resources/playbook.yml
   lint:
@@ -33,6 +54,14 @@ provisioner:
     enabled: False
 
 verifier:
-  name: goss
+  name: testinfra
+  options:
+    vvv: true
+  additional_files_or_dirs:
+    - test/test_*.py
   lint:
-    name: yamllint
+    name: flake8
+# verifier:
+#  name: goss
+#  lint:
+#    name: yamllint

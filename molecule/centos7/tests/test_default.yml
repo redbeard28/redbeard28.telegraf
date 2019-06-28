@@ -18,3 +18,7 @@ file:
     group: telegraf
     mode: "0644"
     filetype: file
+#service:
+#  telegraf:
+#    enabled: true
+#    running: true
