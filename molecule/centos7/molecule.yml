@@ -37,7 +37,6 @@ driver:
   name: docker
 platforms:
   - name: telegraf-centos-latest
-    log: True
     image: redbeard28/docker-centos7-ansible
     pre_build_image: yes
     privileged: True
